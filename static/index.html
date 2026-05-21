@@ -401,7 +401,7 @@
                     <i data-lucide="shield-check"></i>
                 </div>
                 <h3>Role-Based Access (RBAC)</h3>
-                <p>Dedicated Admin and Member consoles. Admins govern project scope, team registries, and schedules while members focus strictly on resolving their tasks.</p>
+                <p>Dedicated Manager and Employee consoles. Managers govern project scope, team registries, and schedules while employees focus strictly on resolving their assigned tasks.</p>
             </div>
             <!-- Feature 2 -->
             <div class="feature-card">
@@ -421,7 +421,44 @@
             </div>
         </div>
     </section>
+    
     <!-- Roster Widget Section -->
+    <section class="roster-section" id="roster">
+        <div class="roster-card">
+            <h2 style="text-align: center; margin-bottom: 0.5rem; font-family: var(--font-heading); font-weight: 700;">Premium Seed Profiles</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem;">Select any sandbox profile below to log in instantly and explore the system workflows.</p>
+            <div class="roster-grid">
+                <!-- Master Admin -->
+                <div class="roster-badge" onclick="routeToAccount('admin@gmail.com', 'admin123')">
+                    <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;"><i data-lucide="crown" style="color: #fbbf24; width: 20px; height: 20px;"></i></div>
+                    <strong>Ethara.Ai</strong>
+                    <span>admin@gmail.com</span>
+                    <span style="font-size: 0.75rem; color: #a5b4fc; margin-top: 0.25rem;">Full visibility of all projects & teams</span>
+                </div>
+                <!-- Manager 1 -->
+                <div class="roster-badge" onclick="routeToAccount('aarav@taskmanager.com', 'admin123')">
+                    <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;"><i data-lucide="shield" style="color: #60a5fa; width: 20px; height: 20px;"></i></div>
+                    <strong>Aarav Sharma</strong>
+                    <span>aarav@taskmanager.com</span>
+                    <span style="font-size: 0.75rem; color: #fb7185; margin-top: 0.25rem;">Manager (Project 1 Owner)</span>
+                </div>
+                <!-- Manager 2 -->
+                <div class="roster-badge" onclick="routeToAccount('ananya@taskmanager.com', 'admin123')">
+                    <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;"><i data-lucide="shield" style="color: #60a5fa; width: 20px; height: 20px;"></i></div>
+                    <strong>Ananya Iyer</strong>
+                    <span>ananya@taskmanager.com</span>
+                    <span style="font-size: 0.75rem; color: #fb7185; margin-top: 0.25rem;">Manager (Project 2 Owner)</span>
+                </div>
+                <!-- Employee 1 -->
+                <div class="roster-badge" onclick="routeToAccount('vihaan@taskmanager.com', 'member123')">
+                    <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;"><i data-lucide="user" style="color: #34d399; width: 20px; height: 20px;"></i></div>
+                    <strong>Vihaan Patel</strong>
+                    <span>vihaan@taskmanager.com</span>
+                    <span style="font-size: 0.75rem; color: #34d399; margin-top: 0.25rem;">Employee (Assigned to P1)</span>
+                </div>
+            </div>
+        </div>
+    </section>
    
     <!-- Footer -->
     <footer class="landing-footer">
@@ -444,7 +481,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data.user) {
-                        const targetUrl = data.user.role === 'Admin' ? '/admin-dashboard' : '/member-dashboard';
+                        const targetUrl = (data.user.role === 'Admin' || data.user.role === 'Master') ? '/admin-dashboard' : '/member-dashboard';
                         
                         // Dynamically update UI CTA buttons
                         const signinNav = document.getElementById('nav-btn-signin');

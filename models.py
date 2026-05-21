@@ -99,6 +99,7 @@ class Task(db.Model):
             'assigned_to_id': self.assigned_to_id,
             'assignee': self.assignee.to_dict() if self.assignee else None,
             'project_id': self.project_id,
+            'project_name': self.project.name if self.project else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }

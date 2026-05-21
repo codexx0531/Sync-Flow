@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Redirect based on role
             setTimeout(() => {
-                if (response.user.role === 'Admin') {
+                if (response.user.role === 'Admin' || response.user.role === 'Master') {
                     window.location.href = '/admin-dashboard';
                 } else {
                     window.location.href = '/member-dashboard';

@@ -882,6 +882,10 @@ h1, h2, h3, h4, h5, h6 {
 .filter-group select:focus {
     border-color: var(--primary);
 }
+.filter-group select option {
+    background-color: var(--bg-dark-soft);
+    color: var(--text-primary);
+}
 
 /* Kanban Columns */
 .tasks-kanban-layout {

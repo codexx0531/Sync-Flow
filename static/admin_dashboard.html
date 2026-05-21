@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SyncFlow | Admin Dashboard</title>
+    <title>SyncFlow | Manager Dashboard</title>
     <!-- Google Fonts: Outfit & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,10 +52,10 @@
                 </nav>
 
                 <div class="sidebar-user">
-                    <div class="user-avatar" id="avatar-initials">AD</div>
+                    <div class="user-avatar" id="avatar-initials">MG</div>
                     <div class="user-info">
-                        <span class="user-name" id="profile-name">Admin Name</span>
-                        <span class="user-role-badge" id="profile-role">Admin</span>
+                        <span class="user-name" id="profile-name">Manager Name</span>
+                        <span class="user-role-badge" id="profile-role">Manager</span>
                     </div>
                     <button class="logout-btn" id="logout-button" title="Log Out">
                         <i data-lucide="log-out"></i>
@@ -163,6 +163,35 @@
                                 <tbody id="overdue-tasks-table">
                                     <tr>
                                         <td colspan="6" class="text-center py-4">No critical overdue tasks. Excellent job!</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Latest Created Tasks -->
+                    <div class="dashboard-card full-width-card" style="margin-top: 2rem;">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3>📂 Latest Created Tasks</h3>
+                                <p class="card-desc">Newly added tasks across all active projects</p>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Task</th>
+                                        <th>Project</th>
+                                        <th>Assignee</th>
+                                        <th>Priority</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="latest-tasks-table">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">No tasks found. Create a new task to get started!</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -384,8 +413,8 @@
                 <div class="form-group">
                     <label for="create-role">Access Control Role</label>
                     <select id="create-role">
-                        <option value="Member">Team Member</option>
-                        <option value="Admin">System Administrator</option>
+                        <option value="Member">Employee</option>
+                        <option value="Admin">Manager</option>
                     </select>
                 </div>
                 <div class="modal-actions">

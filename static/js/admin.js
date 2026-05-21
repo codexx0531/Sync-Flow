@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function checkAuth() {
     try {
         const response = await API.request('/api/auth/me');
-        if (!response.user || response.user.role !== 'Admin') {
+        if (!response.user || (response.user.role !== 'Admin' && response.user.role !== 'Master')) {
             window.location.href = '/login';
             return;
         }
@@ -167,12 +167,19 @@ async function handleLogout() {
     }
 }
 
+function getRoleLabel(role) {
+    if (role === 'Master') return 'Master Admin';
+    if (role === 'Admin') return 'Manager';
+    if (role === 'Member') return 'Employee';
+    return role;
+}
+
 // --- User Profile Details Loader ---
 function updateUserProfileUI() {
     if (!State.currentUser) return;
     
     document.getElementById('profile-name').innerText = State.currentUser.name;
-    document.getElementById('profile-role').innerText = State.currentUser.role;
+    document.getElementById('profile-role').innerText = getRoleLabel(State.currentUser.role);
     
     const names = State.currentUser.name.split(' ');
     const initials = names.map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -292,6 +299,7 @@ async function renderDashboard() {
         renderStatusChart(stats.todo_tasks, stats.progress_tasks, stats.done_tasks);
         renderDashboardProjectProgress(stats.project_progress);
         renderDashboardOverdueTasks(stats.overdue_tasks);
+        renderDashboardRecentTasks(stats.recent_tasks);
 
     } catch (err) {
         showToast('Failed to load dashboard metrics.', 'error');
@@ -417,10 +425,65 @@ function renderDashboardOverdueTasks(overdueTasks) {
 
         tr.innerHTML = `
             <td><strong>${task.title}</strong></td>
-            <td>Project #${task.project_id}</td>
+            <td>${task.project_name || ('Project #' + task.project_id)}</td>
             <td>${assigneeName}</td>
             <td>${priBadge}</td>
             <td class="text-danger"><strong>${task.due_date}</strong></td>
+            <td>${statusBadge}</td>
+        `;
+        
+        tr.style.cursor = 'pointer';
+        tr.addEventListener('click', () => openTaskDetailsModal(task));
+        
+        tbody.appendChild(tr);
+    });
+}
+
+// Render Recent Tasks table
+function renderDashboardRecentTasks(recentTasks) {
+    const tbody = document.getElementById('latest-tasks-table');
+    tbody.innerHTML = '';
+
+    if (!recentTasks || recentTasks.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4 text-secondary">
+                    📂 No tasks found. Create a new task to get started!
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    recentTasks.forEach(task => {
+        const tr = document.createElement('tr');
+        
+        const assigneeName = task.assignee ? task.assignee.name : '<span class="text-secondary">Unassigned</span>';
+        let priBadge = `<span class="badge-priority badge-${task.priority.toLowerCase()}">${task.priority}</span>`;
+        let statusBadge = `<span class="badge-status badge-${task.status.toLowerCase().replace(' ', '')}">${task.status}</span>`;
+        let dateText = task.due_date || '<span class="text-secondary">No due date</span>';
+        let dateTd = task.due_date ? `<strong>${task.due_date}</strong>` : dateText;
+
+        // Check if overdue
+        let isOverdue = false;
+        if (task.due_date && task.status !== 'Done') {
+            const due = new Date(task.due_date);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            if (due < today) {
+                isOverdue = true;
+            }
+        }
+        if (isOverdue) {
+            dateTd = `<span class="text-danger"><strong>${task.due_date}</strong></span>`;
+        }
+
+        tr.innerHTML = `
+            <td><strong>${task.title}</strong></td>
+            <td>${task.project_name || ('Project #' + task.project_id)}</td>
+            <td>${assigneeName}</td>
+            <td>${priBadge}</td>
+            <td>${dateTd}</td>
             <td>${statusBadge}</td>
         `;
         
@@ -551,7 +614,7 @@ async function renderCurrentProjectMembers(projectId) {
             tr.innerHTML = `
                 <td><strong>${m.user.name}</strong></td>
                 <td>${m.user.email}</td>
-                <td><span class="user-role-badge">${m.user.role}</span></td>
+                <td><span class="user-role-badge">${getRoleLabel(m.user.role)}</span></td>
                 <td style="text-align: right;">${actionBtnHtml}</td>
             `;
             tbody.appendChild(tr);
@@ -602,7 +665,7 @@ async function populateUserSelectionForProject(projectId) {
         }
 
         filtered.forEach(u => {
-            dropdown.innerHTML += `<option value="${u.id}">${u.name} (${u.email} - ${u.role})</option>`;
+            dropdown.innerHTML += `<option value="${u.id}">${u.name} (${u.email} - ${getRoleLabel(u.role)})</option>`;
         });
     } catch (err) {
         dropdown.innerHTML = '<option value="">Failed to load list.</option>';
@@ -656,18 +719,18 @@ async function populateTaskAssigneeDropdown(projectId, currentAssigneeId = null)
     if (!projectId) return;
 
     try {
-        const members = await API.request(`/api/projects/${projectId}/members`);
+        const users = await API.request('/api/users');
         
         elements.forEach(item => {
             if (item.el) {
-                members.forEach(m => {
-                    const selected = currentAssigneeId == m.user_id ? 'selected' : '';
-                    item.el.innerHTML += `<option value="${m.user_id}" ${selected}>${m.user.name}</option>`;
+                users.forEach(u => {
+                    const selected = currentAssigneeId == u.id ? 'selected' : '';
+                    item.el.innerHTML += `<option value="${u.id}" ${selected}>${u.name} (${getRoleLabel(u.role)})</option>`;
                 });
             }
         });
     } catch (err) {
-        console.error('Failed to resolve project members for assignment dropdowns.');
+        console.error('Failed to resolve users for assignment dropdowns.');
     }
 }
 
@@ -794,17 +857,10 @@ async function openTaskDetailsModal(task) {
 
     // Resolve project name
     let project = State.projects.find(p => p.id === task.project_id);
-    if (!project) {
-        try {
-            // Lazy load project if not in state
-            project = await API.request(`/api/projects/${task.project_id}`);
-        } catch (e) {
-            project = { name: `Project Portfolio #${task.project_id}` };
-        }
-    }
+    const projName = project ? project.name : (task.project_name || `Project #${task.project_id}`);
     
     document.getElementById('edit-task-project-name').innerHTML = `
-        <span class="badge-status badge-todo">${project.name}</span>
+        <span class="badge-status badge-todo">${projName}</span>
     `;
 
     document.getElementById('edit-task-status').value = task.status;
@@ -842,7 +898,7 @@ async function renderMembers() {
                 <div class="member-details">
                     <h3>${user.name}</h3>
                     <p class="text-secondary">${user.email}</p>
-                    <span class="user-role-badge ${user.role === 'Admin' ? 'admin' : ''}">${user.role}</span>
+                    <span class="user-role-badge ${user.role === 'Admin' ? 'admin' : (user.role === 'Master' ? 'master' : '')}">${getRoleLabel(user.role)}</span>
                 </div>
             `;
             container.appendChild(card);
