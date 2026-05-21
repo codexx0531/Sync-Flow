@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncFlow | Admin Dashboard</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Dynamic Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- MAIN ROOT CONTAINER -->
+    <div id="app-root">
+
+        <!-- ================= MAIN APP VIEW ================= -->
+        <div id="main-view" class="app-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar-brand">
+                    <i data-lucide="layers" class="logo-icon"></i>
+                    <span>SyncFlow</span>
+                </div>
+
+                <nav class="sidebar-menu">
+                    <a href="#dashboard" class="nav-item active" id="nav-dashboard">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#projects" class="nav-item" id="nav-projects">
+                        <i data-lucide="folder-kanban"></i>
+                        <span>Projects</span>
+                    </a>
+                    <a href="#tasks" class="nav-item" id="nav-tasks">
+                        <i data-lucide="check-square"></i>
+                        <span>Tasks</span>
+                    </a>
+                    <a href="#members" class="nav-item" id="nav-members">
+                        <i data-lucide="users"></i>
+                        <span>Team</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="avatar-initials">AD</div>
+                    <div class="user-info">
+                        <span class="user-name" id="profile-name">Admin Name</span>
+                        <span class="user-role-badge" id="profile-role">Admin</span>
+                    </div>
+                    <button class="logout-btn" id="logout-button" title="Log Out">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Header -->
+                <header class="content-header">
+                    <div class="header-title">
+                        <h1 id="view-title">Workspace Dashboard</h1>
+                        <p id="view-subtitle" class="text-secondary">Core analytics and critical task tracking.</p>
+                    </div>
+                    <div class="header-actions" id="header-action-container">
+                        <!-- Dynamic action buttons will go here -->
+                    </div>
+                </header>
+
+                <!-- ================= VIEW: DASHBOARD ================= -->
+                <section id="view-dashboard" class="content-section">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-indigo">
+                                <i data-lucide="clipboard-list"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-value" id="stat-total-tasks">0</span>
+                                <span class="stat-label">Total Tasks</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon bg-amber">
+                                <i data-lucide="loader"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-value" id="stat-pending-tasks">0</span>
+                                <span class="stat-label">In Progress</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon bg-emerald">
+                                <i data-lucide="check-circle-2"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-value" id="stat-completed-tasks">0</span>
+                                <span class="stat-label">Completed</span>
+                            </div>
+                        </div>
+                        <div class="stat-card urgent">
+                            <div class="stat-icon bg-rose animate-pulse">
+                                <i data-lucide="alert-triangle"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-value" id="stat-overdue-tasks">0</span>
+                                <span class="stat-label">Overdue</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics / Visualizations -->
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card chart-container-card">
+                            <h3>Task Distribution</h3>
+                            <p class="card-desc">Status breakdown of current project tasks</p>
+                            <div class="chart-wrapper">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card progress-container-card">
+                            <h3>Project Health</h3>
+                            <p class="card-desc">Completion percentage by project</p>
+                            <div class="progress-list-wrapper" id="dashboard-project-progress">
+                                <div class="empty-state">
+                                    <i data-lucide="folder"></i>
+                                    <p>No projects created yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overdue list -->
+                    <div class="dashboard-card full-width-card">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3>⚠️ Critical Focus Tasks</h3>
+                                <p class="card-desc">Active tasks past their due date requiring immediate action</p>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Task</th>
+                                        <th>Project</th>
+                                        <th>Assignee</th>
+                                        <th>Priority</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="overdue-tasks-table">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">No critical overdue tasks. Excellent job!</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= VIEW: PROJECTS ================= -->
+                <section id="view-projects" class="content-section hidden">
+                    <div class="projects-grid" id="projects-container">
+                        <!-- Dynamic projects render here -->
+                    </div>
+                </section>
+
+                <!-- ================= VIEW: TASKS ================= -->
+                <section id="view-tasks" class="content-section hidden">
+                    <!-- Filters Panel -->
+                    <div class="filters-panel">
+                        <div class="filter-group">
+                            <label for="filter-project"><i data-lucide="folder"></i> Project</label>
+                            <select id="filter-project">
+                                <option value="all">All Projects</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-priority"><i data-lucide="bar-chart-2"></i> Priority</label>
+                            <select id="filter-priority">
+                                <option value="all">All Priorities</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-status"><i data-lucide="check-square"></i> Status</label>
+                            <select id="filter-status">
+                                <option value="all">All Statuses</option>
+                                <option value="Todo">Todo</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Done">Done</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tasks Kanban Layout -->
+                    <div class="tasks-kanban-layout">
+                        <!-- Column: Todo -->
+                        <div class="kanban-column" id="col-todo">
+                            <div class="column-header">
+                                <span class="dot bg-indigo"></span>
+                                <h4>To Do</h4>
+                                <span class="badge" id="badge-todo">0</span>
+                            </div>
+                            <div class="column-cards" id="cards-todo"></div>
+                        </div>
+
+                        <!-- Column: In Progress -->
+                        <div class="kanban-column" id="col-progress">
+                            <div class="column-header">
+                                <span class="dot bg-amber"></span>
+                                <h4>In Progress</h4>
+                                <span class="badge" id="badge-progress">0</span>
+                            </div>
+                            <div class="column-cards" id="cards-progress"></div>
+                        </div>
+
+                        <!-- Column: Done -->
+                        <div class="kanban-column" id="col-done">
+                            <div class="column-header">
+                                <span class="dot bg-emerald"></span>
+                                <h4>Done</h4>
+                                <span class="badge" id="badge-done">0</span>
+                            </div>
+                            <div class="column-cards" id="cards-done"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= VIEW: MEMBERS ================= -->
+                <section id="view-members" class="content-section hidden">
+                    <div class="members-grid" id="members-container">
+                        <!-- Dynamic team cards will render here -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Modal: New Project -->
+    <div id="modal-project" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Launch New Project</h3>
+                <button class="modal-close" onclick="window.closeModal('modal-project')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="project-form">
+                <div class="form-group">
+                    <label for="project-name">Project Name</label>
+                    <input type="text" id="project-name" placeholder="e.g. Q3 Website Redesign" required>
+                </div>
+                <div class="form-group">
+                    <label for="project-desc">Description</label>
+                    <textarea id="project-desc" rows="4" placeholder="Brief details about the goal of this project..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.closeModal('modal-project')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Project -->
+    <div id="modal-edit-project" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Edit Project Settings</h3>
+                <button class="modal-close" onclick="window.closeModal('modal-edit-project')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="project-edit-form">
+                <input type="hidden" id="edit-project-id">
+                <div class="form-group">
+                    <label for="edit-project-name">Project Name</label>
+                    <input type="text" id="edit-project-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-project-desc">Description</label>
+                    <textarea id="edit-project-desc" rows="4" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="project-delete-btn" class="btn btn-danger mr-auto">
+                        <i data-lucide="trash-2"></i> Delete Project
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="window.closeModal('modal-edit-project')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Project Member & Manage memberships -->
+    <div id="modal-member" class="modal-overlay hidden">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Assign & Manage Project Team</h3>
+                <button class="modal-close" onclick="window.closeModal('modal-member')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <!-- Existing Members Section -->
+            <div class="project-members-section">
+                <h4>Current Project Members</h4>
+                <div class="table-responsive" style="max-height: 180px; margin-bottom: 1.5rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                    <table class="data-table" style="font-size: 0.8rem;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="current-project-members-tbody">
+                            <!-- Rendered dynamically with "Remove" buttons for admins -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <form id="member-form">
+                <input type="hidden" id="member-project-id">
+                <div class="form-group">
+                    <label>Project Workspace</label>
+                    <input type="text" id="member-project-name" class="input-readonly" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="member-user-select">Select New Team Member</label>
+                    <select id="member-user-select" required>
+                        <!-- Users list populated dynamically -->
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.closeModal('modal-member')">Close</button>
+                    <button type="submit" class="btn btn-primary">Add to Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Direct Admin User Creation -->
+    <div id="modal-create-user" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Create New User Account</h3>
+                <button class="modal-close" onclick="window.closeModal('modal-create-user')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="create-user-form">
+                <div class="form-group">
+                    <label for="create-name">Full Name</label>
+                    <input type="text" id="create-name" placeholder="Aarav Gupta" required>
+                </div>
+                <div class="form-group">
+                    <label for="create-email">Email Address</label>
+                    <input type="email" id="create-email" placeholder="aarav.gupta@company.in" required>
+                </div>
+                <div class="form-group">
+                    <label for="create-password">Temporary Password</label>
+                    <input type="password" id="create-password" placeholder="Min 6 characters" required>
+                </div>
+                <div class="form-group">
+                    <label for="create-role">Access Control Role</label>
+                    <select id="create-role">
+                        <option value="Member">Team Member</option>
+                        <option value="Admin">System Administrator</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.closeModal('modal-create-user')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: New Task -->
+    <div id="modal-task" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Create New Task</h3>
+                <button class="modal-close" onclick="window.closeModal('modal-task')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="task-project-select">Project</label>
+                    <select id="task-project-select" required>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <input type="text" id="task-title" placeholder="e.g. Build authentication endpoints" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-desc">Description</label>
+                    <textarea id="task-desc" rows="3" placeholder="Explain the deliverable details..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="task-priority">Priority</label>
+                        <select id="task-priority">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="task-due-date">Due Date</label>
+                        <input type="date" id="task-due-date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="task-assignee-select">Assignee</label>
+                    <select id="task-assignee-select">
+                        <option value="">Unassigned</option>
+                        <!-- Populated dynamically based on project members -->
+                    </select>
+                    <p class="field-hint">Note: Assignees must be members of the selected project.</p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.closeModal('modal-task')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Task Details / Edit -->
+    <div id="modal-task-details" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Task Details</h3>
+                <button class="modal-close" onclick="window.closeModal('modal-task-details')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="task-edit-form">
+                <input type="hidden" id="edit-task-id">
+                
+                <div class="form-group">
+                    <label>Project</label>
+                    <div id="edit-task-project-name" class="readonly-badge-container"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-task-title">Task Title</label>
+                    <input type="text" id="edit-task-title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-task-desc">Description</label>
+                    <textarea id="edit-task-desc" rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="edit-task-status">Status</label>
+                        <select id="edit-task-status" required>
+                            <option value="Todo">Todo</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Done">Done</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="edit-task-priority">Priority</label>
+                        <select id="edit-task-priority">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="edit-task-due-date">Due Date</label>
+                        <input type="date" id="edit-task-due-date">
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="edit-task-assignee">Assignee</label>
+                        <select id="edit-task-assignee">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="task-delete-btn" class="btn btn-danger mr-auto">
+                        <i data-lucide="trash-2"></i> Delete
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="window.closeModal('modal-task-details')">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Frontend Core Application Script -->
+    <script src="js/admin.js"></script>
+</body>
+</html>

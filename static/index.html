@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to SyncFlow | Smarter Team Collaboration</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Landing Page Specific Additions for Stunning Aesthetics */
+        .landing-hero {
+            position: relative;
+            padding: 8rem 2rem 6rem 2rem;
+            text-align: center;
+            background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.18) 0%, transparent 60%),
+                        radial-gradient(circle at 10% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+            overflow: hidden;
+        }
+        .landing-nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+        }
+        .landing-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5b4fc, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .landing-brand .logo-icon {
+            color: var(--primary);
+            width: 28px;
+            height: 28px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+        .nav-link:hover {
+            color: #ffffff;
+        }
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--border-color-glow);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            color: #a5b4fc;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            animation: pulse-glow 3s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(99, 102, 241, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+        }
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.15;
+            max-width: 900px;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(180deg, #ffffff 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-desc {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+        .hero-ctas {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: center;
+        }
+        .hero-preview {
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 4rem;
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.8), var(--shadow-glow);
+            padding: 0.5rem;
+            position: relative;
+            transform: perspective(1000px) rotateX(5deg);
+            transition: var(--transition-smooth);
+        }
+        .hero-preview:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-5px);
+        }
+        .preview-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px 12px 0 0;
+        }
+        .preview-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .preview-dot.red { background: #ef4444; }
+        .preview-dot.yellow { background: #f59e0b; }
+        .preview-dot.green { background: #10b981; }
+        .preview-image {
+            width: 100%;
+            height: 480px;
+            border-radius: 0 0 12px 12px;
+            background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.25) 0%, transparent 50%),
+                        #111827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Mockup Kanban Column illustration inside preview */
+        .mock-dashboard {
+            width: 85%;
+            height: 80%;
+            display: flex;
+            gap: 1.5rem;
+        }
+        .mock-column {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .mock-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .mock-line {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        .mock-line.short { width: 40%; }
+        .mock-line.medium { width: 70%; }
+        .mock-line.long { width: 90%; }
+        .mock-badge {
+            width: 45px;
+            height: 14px;
+            border-radius: 4px;
+            background: var(--primary);
+        }
+        /* Features Section */
+        .landing-features {
+            padding: 6rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+            transition: var(--transition-smooth);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--border-color-glow);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.05);
+        }
+        .feature-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        /* Roster Widget */
+        .roster-section {
+            padding: 6rem 3rem;
+            background: linear-gradient(180deg, var(--bg-dark), var(--bg-dark-soft));
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .roster-card {
+            background: var(--bg-dark-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem;
+            box-shadow: var(--shadow-premium);
+        }
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .roster-badge {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        .roster-badge:hover {
+            transform: scale(1.03);
+            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--border-color-glow);
+        }
+        .roster-badge strong {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        .roster-badge span {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: block;
+            word-break: break-all;
+        }
+        /* Footer */
+        .landing-footer {
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .landing-nav { padding: 1.25rem 1.5rem; }
+            .landing-hero { padding-top: 6rem; }
+            .hero-preview { display: none; } /* Hide mockup on mobile for space */
+            .roster-card { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Navigation Bar -->
+    <header class="landing-nav">
+        <div class="landing-brand">
+            <i data-lucide="layers" class="logo-icon"></i>
+            <span>SyncFlow</span>
+        </div>
+        <nav class="nav-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="/login" class="btn btn-secondary btn-sm" id="nav-btn-signin">Sign In</a>
+            <a href="/register" class="btn btn-primary btn-sm" id="nav-btn-signup">Get Started</a>
+        </nav>
+    </header>
+    <!-- Main Hero Landing -->
+    <section class="landing-hero">
+        <div class="hero-pill">
+            <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+            <span>Role-Based Task Operations</span>
+        </div>
+        <h1 class="hero-title">Smarter Workspace. Unified Collaborative Power.</h1>
+        <p class="hero-desc">
+            SyncFlow is a premium task scheduling suite built with secure Flask cookie architecture, dynamic Kanban filters, and role-based permissions designed to maximize developer productivity.
+        </p>
+        <div class="hero-ctas">
+            <a href="/register" class="btn btn-primary" id="hero-btn-primary">Register Workspace</a>
+            <a href="/login" class="btn btn-secondary" id="hero-btn-secondary">Access Dashboard</a>
+        </div>
+        <!-- 3D Layered Perspective Preview Mockup -->
+        <div class="hero-preview">
+            <div class="preview-bar">
+                <span class="preview-dot red"></span>
+                <span class="preview-dot yellow"></span>
+                <span class="preview-dot green"></span>
+            </div>
+            <div class="preview-image">
+                <div class="mock-dashboard">
+                    <!-- Column 1 -->
+                    <div class="mock-column">
+                        <div class="mock-line short"></div>
+                        <div class="mock-card">
+                            <div class="mock-badge" style="background: var(--primary);"></div>
+                            <div class="mock-line long"></div>
+                            <div class="mock-line medium"></div>
+                        </div>
+                        <div class="mock-card">
+                            <div class="mock-badge" style="background: var(--secondary);"></div>
+                            <div class="mock-line long"></div>
+                        </div>
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="mock-column">
+                        <div class="mock-line short" style="background: var(--warning);"></div>
+                        <div class="mock-card">
+                            <div class="mock-badge" style="background: var(--warning);"></div>
+                            <div class="mock-line long"></div>
+                            <div class="mock-line short"></div>
+                        </div>
+                    </div>
+                    <!-- Column 3 -->
+                    <div class="mock-column">
+                        <div class="mock-line short" style="background: var(--success);"></div>
+                        <div class="mock-card">
+                            <div class="mock-badge" style="background: var(--success);"></div>
+                            <div class="mock-line long"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Key Product Value Props -->
+    <section class="landing-features" id="features">
+        <div class="section-header">
+            <h2>Designed for Modern Operations</h2>
+            <p class="text-secondary">High performance structure combined with intuitive glass layouts.</p>
+        </div>
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <h3>Role-Based Access (RBAC)</h3>
+                <p>Dedicated Admin and Member consoles. Admins govern project scope, team registries, and schedules while members focus strictly on resolving their tasks.</p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="kanban"></i>
+                </div>
+                <h3>Interactive Kanban Boards</h3>
+                <p>Efficiently move tasks across columns with status tracking. Instantly filter deliverables by project name, priority levels, and progression states.</p>
+            </div>
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="trending-up"></i>
+                </div>
+                <h3>Dynamic Metrics & Health</h3>
+                <p>Automatic status counters, visual Chart.js doughnut breakdowns, overdue alerts, and completion progress bars computed in real-time.</p>
+            </div>
+        </div>
+    </section>
+    <!-- Roster Widget Section -->
+   
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <p>© 2026 SyncFlow. Crafted for premium collaborative workflows.</p>
+    </footer>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        // Redirect helper for quick login roster
+        function routeToAccount(email, password) {
+            // Save seed details in localStorage for the login form to pick up
+            localStorage.setItem('seed_email', email);
+            localStorage.setItem('seed_password', password);
+            window.location.href = '/login';
+        }
+        // Smart login checker: If user has a valid active session, direct them straight to dashboard!
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/auth/me', { credentials: 'include' });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.user) {
+                        const targetUrl = data.user.role === 'Admin' ? '/admin-dashboard' : '/member-dashboard';
+                        
+                        // Dynamically update UI CTA buttons
+                        const signinNav = document.getElementById('nav-btn-signin');
+                        const signupNav = document.getElementById('nav-btn-signup');
+                        const primaryHero = document.getElementById('hero-btn-primary');
+                        const secondaryHero = document.getElementById('hero-btn-secondary');
+                        if (signinNav) {
+                            signinNav.innerText = 'Go to Dashboard';
+                            signinNav.href = targetUrl;
+                            signinNav.classList.remove('btn-secondary');
+                            signinNav.classList.add('btn-primary');
+                        }
+                        if (signupNav) signupNav.remove();
+                        if (primaryHero) {
+                            primaryHero.innerText = 'Enter Workspace Dashboard';
+                            primaryHero.href = targetUrl;
+                        }
+                        if (secondaryHero) secondaryHero.remove();
+                    }
+                }
+            } catch (err) {
+                console.log("No active session detected.");
+            }
+        });
+    </script>
+</body>
+</html>

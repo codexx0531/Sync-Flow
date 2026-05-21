@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncFlow | Login</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Dynamic Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <i data-lucide="layers" class="logo-icon"></i>
+                <span>SyncFlow</span>
+            </div>
+            <h2>Welcome Back</h2>
+            <p class="auth-lead">Enter your credentials to access your dashboard.</p>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="auth-email"><i data-lucide="mail"></i> Email Address</label>
+                    <input type="email" id="auth-email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="auth-password"><i data-lucide="lock"></i> Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                <span>Don't have an account?</span>
+                <a href="/register">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frontend Core Application Script -->
+    <script src="js/login.js"></script>
+</body>
+</html>
